@@ -7,6 +7,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
+app.use(express.static('build'))
 
 let persons = [
     { 
@@ -36,11 +37,11 @@ let persons = [
     }
 ]
 
-app.get('/', (request, response) => {
+app.get('/api', (request, response) => {
   response.send(persons);
 })
 
-app.get('/:id', (request, response) => {
+app.get('/api/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find(p => p.id === id)
   if(!person) {
@@ -50,7 +51,7 @@ app.get('/:id', (request, response) => {
   response.send(person)
 })
 
-app.delete('/:id', (request, response) => {
+app.delete('/api/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find(p => p.id === id)
   if(!person) {
@@ -61,7 +62,7 @@ app.delete('/:id', (request, response) => {
   response.status(204).end()
 })
 
-app.post('/', (request, response) => {
+app.post('/api/', (request, response) => {
   const person = request.body;
   if(!person.name) {
     response.status(400).send('Name is not present!')
@@ -81,11 +82,11 @@ app.post('/', (request, response) => {
   response.status(201).send(person)
 })
 
-app.get('/info', (request, response) => {
+app.get('/api/info', (request, response) => {
   response.send(`<p>Phonebook has info for ${persons.length} people</p><br/><p>${Date()}</p>`)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
